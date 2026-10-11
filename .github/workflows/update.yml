@@ -2,8 +2,8 @@ name: Auto Update Subscription Configs
 
 on:
   schedule:
-    # اجرا هر ۶ ساعت یک بار (دقیقه ۰ ساعت‌های ۰, ۶, ۱۲, ۱۸ UTC)
-    - cron: '0 */6 * * *'
+    # اجرا هر ۴ ساعت یک بار (دقیقه ۰ ساعت‌های ۰, ۶, ۱۲, ۱۸ UTC)
+    - cron: '0 */4 * * *'
   workflow_dispatch: # امکان اجرای دستی در هر زمان
 
 jobs:
