@@ -94,58 +94,6 @@
       "settings": {
         "vnext": [
           {
-            "address": "0.0.0.0",
-            "port": 1,
-            "users": [
-              {
-                "encryption": "none",
-                "id": "00000000-0000-0000-0000-000000000000",
-                "level": 8
-              }
-            ]
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "tcp"
-      },
-      "tag": "proxy-1"
-    },
-    {
-      "mux": {
-        "concurrency": -1,
-        "enabled": false
-      },
-      "protocol": "vless",
-      "settings": {
-        "vnext": [
-          {
-            "address": "0.0.0.0",
-            "port": 1,
-            "users": [
-              {
-                "encryption": "none",
-                "id": "00000000-0000-0000-0000-000000000000",
-                "level": 8
-              }
-            ]
-          }
-        ]
-      },
-      "streamSettings": {
-        "network": "tcp"
-      },
-      "tag": "proxy-2"
-    },
-    {
-      "mux": {
-        "concurrency": -1,
-        "enabled": false
-      },
-      "protocol": "vless",
-      "settings": {
-        "vnext": [
-          {
             "address": "sof.edgeptr.org",
             "port": 443,
             "users": [
@@ -169,7 +117,7 @@
           "fingerprint": "chrome"
         }
       },
-      "tag": "proxy-3"
+      "tag": "proxy-1"
     },
     {
       "mux": {
@@ -203,7 +151,7 @@
           "fingerprint": "chrome"
         }
       },
-      "tag": "proxy-4"
+      "tag": "proxy-2"
     },
     {
       "mux": {
@@ -237,7 +185,7 @@
           "fingerprint": "chrome"
         }
       },
-      "tag": "proxy-5"
+      "tag": "proxy-3"
     },
     {
       "mux": {
@@ -271,7 +219,7 @@
           "fingerprint": "chrome"
         }
       },
-      "tag": "proxy-6"
+      "tag": "proxy-4"
     },
     {
       "mux": {
@@ -305,7 +253,7 @@
           "fingerprint": "chrome"
         }
       },
-      "tag": "proxy-7"
+      "tag": "proxy-5"
     },
     {
       "mux": {
@@ -339,7 +287,7 @@
           "fingerprint": "chrome"
         }
       },
-      "tag": "proxy-8"
+      "tag": "proxy-6"
     },
     {
       "mux": {
@@ -351,6 +299,66 @@
         "vnext": [
           {
             "address": "cdn-waw.edgeptr.org",
+            "port": 8080,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "f362f2ba-3863-40c5-adca-d50e911e00c2",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "headers": {},
+          "path": "/"
+        }
+      },
+      "tag": "proxy-7"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "cdn-waw.edgeptr.org",
+            "port": 2052,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "f362f2ba-3863-40c5-adca-d50e911e00c2",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "headers": {},
+          "path": "/"
+        }
+      },
+      "tag": "proxy-8"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "cdn-ams.edgeptr.org",
             "port": 8080,
             "users": [
               {
@@ -380,7 +388,7 @@
       "settings": {
         "vnext": [
           {
-            "address": "cdn-waw.edgeptr.org",
+            "address": "cdn-ams.edgeptr.org",
             "port": 2052,
             "users": [
               {
@@ -410,12 +418,216 @@
       "settings": {
         "vnext": [
           {
-            "address": "cdn-ams.edgeptr.org",
+            "address": "sof.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c447c81c-5857-4bcd-bc8c-de3b16216f9b",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "EtKRG8sxUJsdy-KwUOtYUNJnSn5VMx2sfKvvdpzg2X0",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "www.lovelive-anime.jp",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-11"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "nbg.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c447c81c-5857-4bcd-bc8c-de3b16216f9b",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "EtKRG8sxUJsdy-KwUOtYUNJnSn5VMx2sfKvvdpzg2X0",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "www.lovelive-anime.jp",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-12"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "fra.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c447c81c-5857-4bcd-bc8c-de3b16216f9b",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "NgeK43tvGe6YZNEdr4HL-CdimEA59KNFtu1nCNh8LFE",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "ajax.aspnetcdn.com",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-13"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "sto.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c447c81c-5857-4bcd-bc8c-de3b16216f9b",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "EtKRG8sxUJsdy-KwUOtYUNJnSn5VMx2sfKvvdpzg2X0",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "www.lovelive-anime.jp",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-14"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "66.245.194.204",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c447c81c-5857-4bcd-bc8c-de3b16216f9b",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "EtKRG8sxUJsdy-KwUOtYUNJnSn5VMx2sfKvvdpzg2X0",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "www.lovelive-anime.jp",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-15"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "lon.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c447c81c-5857-4bcd-bc8c-de3b16216f9b",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "NgeK43tvGe6YZNEdr4HL-CdimEA59KNFtu1nCNh8LFE",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "ajax.aspnetcdn.com",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-16"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "cdn-waw.edgeptr.org",
             "port": 8080,
             "users": [
               {
                 "encryption": "none",
-                "id": "f362f2ba-3863-40c5-adca-d50e911e00c2",
+                "id": "c447c81c-5857-4bcd-bc8c-de3b16216f9b",
                 "level": 8
               }
             ]
@@ -429,7 +641,67 @@
           "path": "/"
         }
       },
-      "tag": "proxy-11"
+      "tag": "proxy-17"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "cdn-waw.edgeptr.org",
+            "port": 2052,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c447c81c-5857-4bcd-bc8c-de3b16216f9b",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "headers": {},
+          "path": "/"
+        }
+      },
+      "tag": "proxy-18"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "cdn-ams.edgeptr.org",
+            "port": 8080,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c447c81c-5857-4bcd-bc8c-de3b16216f9b",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "headers": {},
+          "path": "/"
+        }
+      },
+      "tag": "proxy-19"
     },
     {
       "mux": {
@@ -445,7 +717,7 @@
             "users": [
               {
                 "encryption": "none",
-                "id": "f362f2ba-3863-40c5-adca-d50e911e00c2",
+                "id": "c447c81c-5857-4bcd-bc8c-de3b16216f9b",
                 "level": 8
               }
             ]
@@ -459,7 +731,655 @@
           "path": "/"
         }
       },
-      "tag": "proxy-12"
+      "tag": "proxy-20"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "sof.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "61caa1a2-3a26-4e06-8c6d-d4e729831082",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "EtKRG8sxUJsdy-KwUOtYUNJnSn5VMx2sfKvvdpzg2X0",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "www.lovelive-anime.jp",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-21"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "nbg.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "61caa1a2-3a26-4e06-8c6d-d4e729831082",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "EtKRG8sxUJsdy-KwUOtYUNJnSn5VMx2sfKvvdpzg2X0",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "www.lovelive-anime.jp",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-22"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "fra.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "61caa1a2-3a26-4e06-8c6d-d4e729831082",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "NgeK43tvGe6YZNEdr4HL-CdimEA59KNFtu1nCNh8LFE",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "ajax.aspnetcdn.com",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-23"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "sto.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "61caa1a2-3a26-4e06-8c6d-d4e729831082",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "EtKRG8sxUJsdy-KwUOtYUNJnSn5VMx2sfKvvdpzg2X0",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "www.lovelive-anime.jp",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-24"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "66.245.194.204",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "61caa1a2-3a26-4e06-8c6d-d4e729831082",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "EtKRG8sxUJsdy-KwUOtYUNJnSn5VMx2sfKvvdpzg2X0",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "www.lovelive-anime.jp",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-25"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "lon.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "61caa1a2-3a26-4e06-8c6d-d4e729831082",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "NgeK43tvGe6YZNEdr4HL-CdimEA59KNFtu1nCNh8LFE",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "ajax.aspnetcdn.com",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-26"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "cdn-waw.edgeptr.org",
+            "port": 8080,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "61caa1a2-3a26-4e06-8c6d-d4e729831082",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "headers": {},
+          "path": "/"
+        }
+      },
+      "tag": "proxy-27"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "cdn-waw.edgeptr.org",
+            "port": 2052,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "61caa1a2-3a26-4e06-8c6d-d4e729831082",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "headers": {},
+          "path": "/"
+        }
+      },
+      "tag": "proxy-28"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "cdn-ams.edgeptr.org",
+            "port": 8080,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "61caa1a2-3a26-4e06-8c6d-d4e729831082",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "headers": {},
+          "path": "/"
+        }
+      },
+      "tag": "proxy-29"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "cdn-ams.edgeptr.org",
+            "port": 2052,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "61caa1a2-3a26-4e06-8c6d-d4e729831082",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "headers": {},
+          "path": "/"
+        }
+      },
+      "tag": "proxy-30"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "sof.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c7952283-4fe2-4ace-b604-bd06a7906bfa",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "EtKRG8sxUJsdy-KwUOtYUNJnSn5VMx2sfKvvdpzg2X0",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "www.lovelive-anime.jp",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-31"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "nbg.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c7952283-4fe2-4ace-b604-bd06a7906bfa",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "EtKRG8sxUJsdy-KwUOtYUNJnSn5VMx2sfKvvdpzg2X0",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "www.lovelive-anime.jp",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-32"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "fra.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c7952283-4fe2-4ace-b604-bd06a7906bfa",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "NgeK43tvGe6YZNEdr4HL-CdimEA59KNFtu1nCNh8LFE",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "ajax.aspnetcdn.com",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-33"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "sto.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c7952283-4fe2-4ace-b604-bd06a7906bfa",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "EtKRG8sxUJsdy-KwUOtYUNJnSn5VMx2sfKvvdpzg2X0",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "www.lovelive-anime.jp",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-34"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "66.245.194.204",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c7952283-4fe2-4ace-b604-bd06a7906bfa",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "EtKRG8sxUJsdy-KwUOtYUNJnSn5VMx2sfKvvdpzg2X0",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "www.lovelive-anime.jp",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-35"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "lon.edgeptr.org",
+            "port": 443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c7952283-4fe2-4ace-b604-bd06a7906bfa",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "publicKey": "NgeK43tvGe6YZNEdr4HL-CdimEA59KNFtu1nCNh8LFE",
+          "shortId": "f0eb800bd980b00b",
+          "serverName": "ajax.aspnetcdn.com",
+          "fingerprint": "chrome"
+        }
+      },
+      "tag": "proxy-36"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "cdn-waw.edgeptr.org",
+            "port": 8080,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c7952283-4fe2-4ace-b604-bd06a7906bfa",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "headers": {},
+          "path": "/"
+        }
+      },
+      "tag": "proxy-37"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "cdn-waw.edgeptr.org",
+            "port": 2052,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c7952283-4fe2-4ace-b604-bd06a7906bfa",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "headers": {},
+          "path": "/"
+        }
+      },
+      "tag": "proxy-38"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "cdn-ams.edgeptr.org",
+            "port": 8080,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c7952283-4fe2-4ace-b604-bd06a7906bfa",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "headers": {},
+          "path": "/"
+        }
+      },
+      "tag": "proxy-39"
+    },
+    {
+      "mux": {
+        "concurrency": -1,
+        "enabled": false
+      },
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "cdn-ams.edgeptr.org",
+            "port": 2052,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "c7952283-4fe2-4ace-b604-bd06a7906bfa",
+                "level": 8
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "headers": {},
+          "path": "/"
+        }
+      },
+      "tag": "proxy-40"
     },
     {
       "protocol": "freedom",
