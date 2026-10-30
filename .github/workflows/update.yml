@@ -16,58 +16,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  classify-runtime-failure:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-    steps:
-      - name: Classify previous runtime test failure without printing logs
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        shell: bash
-        run: |
-          if ! gh run view 41030893557 --job 123980099808 --log-failed > "$RUNNER_TEMP/failed-tests.log" 2>/dev/null; then
-            echo '::error::Could not retrieve the test log.'
-            exit 1
-          fi
-          python - "$RUNNER_TEMP/failed-tests.log" <<'PYCODE'
-          import re
-          import sys
-          from pathlib import Path
-
-          text = Path(sys.argv[1]).read_text(errors='replace')
-          names = [
-              'test_delayed_response_survives_client_half_close',
-              'test_https_speed_test_through_real_vless_tunnel_verifies_tls',
-              'test_local_speed_test_selects_faster_tunnel_and_outputs_valid_xray_profile',
-              'test_runtime_balancer_startup_latency_failover_and_recovery',
-              'test_subscription_txt_validates_via_stdin_and_invalid_json_is_rejected',
-              'setUpClass',
-          ]
-          for name in names:
-              if re.search(r'\b' + name + r'\b[^\n]*\.\.\. (?:FAIL|ERROR)\b', text):
-                  print('::notice title=Failed runtime test::' + name)
-          lines = sorted({int(n) for n in re.findall(r'test_xray_runtime\.py", line (\d+)', text)})
-          print('::notice title=Runtime test stack lines::' + ','.join(map(str, lines)))
-          errors = [key for key in ('AssertionError', 'CalledProcessError', 'TimeoutExpired', 'TimeoutError', 'ConnectionResetError', 'BrokenPipeError', 'ConnectionRefusedError', 'OSError') if key in text]
-          print('::notice title=Error types::' + ','.join(errors))
-          phrases = {
-              'xray_test_server_startup': 'The local test Xray instance exited during startup',
-              'xray_listener_timeout': 'The local test Xray listener did not start',
-              'xray_stdin_invalid': 'Xray rejected valid JSON from stdin',
-              'xray_stdin_false_positive': 'Xray accepted invalid JSON from stdin',
-              'xray_optimized_profile_invalid': 'Xray rejected the optimized profile',
-              'speedtest_no_success': 'No node completed the download test',
-              'speedtest_xray_failed': 'Xray exited before the benchmark could start',
-              'curl_tls_error': 'CERTIFICATE_VERIFY_FAILED',
-          }
-          print('::notice title=Known causes::' + ','.join(key for key, phrase in phrases.items() if phrase in text))
-          PYCODE
-
   build-and-update:
-    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:

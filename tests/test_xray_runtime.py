@@ -22,6 +22,15 @@ XRAY_ENV = os.environ.get('XRAY_BINARY')
 TEST_ID = '8c376d80-c7a9-47e2-9d85-305b3e91df01'
 
 
+def loopback_redirect_settings(port):
+    # Xray 26.10.29 blocks private destinations from VLESS inbounds by default.
+    # Permit only the local HTTP server used by this test, not arbitrary targets.
+    return {
+        'redirect': f'127.0.0.1:{port}',
+        'finalRules': [{'action': 'allow', 'network': 'tcp', 'ip': ['127.0.0.1/32'], 'port': str(port)}],
+    }
+
+
 class TargetHandler(BaseHTTPRequestHandler):
     def do_HEAD(self):
         self.server.probe_count += 1
@@ -122,7 +131,7 @@ class XrayRuntimeTests(unittest.TestCase):
                 })
                 outbounds.append({
                     'tag': out_tag, 'protocol': 'freedom',
-                    'settings': {'redirect': f'127.0.0.1:{target.server_address[1]}'},
+                    'settings': loopback_redirect_settings(target.server_address[1]),
                 })
                 rules.append({'type': 'field', 'inboundTag': [in_tag], 'outboundTag': out_tag})
             server_config = {
@@ -235,7 +244,7 @@ class XrayRuntimeTests(unittest.TestCase):
                     }],
                     'outbounds': [{
                         'protocol': 'freedom',
-                        'settings': {'redirect': f'127.0.0.1:{target.server_address[1]}'},
+                        'settings': loopback_redirect_settings(target.server_address[1]),
                     }],
                 }), encoding='utf-8')
                 server = subprocess.Popen(
