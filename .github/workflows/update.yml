@@ -1,7 +1,7 @@
 name: Auto Update Subscription Configs
 
 on:
-  # Temporary branch-only trigger for an end-to-end workflow test.
+  # Temporary branch-only trigger for an end-to-end publishing test.
   push:
     branches:
       - arena/f6a69f1a-sub-collector1
@@ -38,6 +38,10 @@ jobs:
         env:
           SUB_URLS: ${{ secrets.SUB_URLS }}
         run: python collector.py
+
+      - name: Create a harmless output change for the branch publishing test
+        if: github.event_name == 'push' && github.ref == 'refs/heads/arena/f6a69f1a-sub-collector1'
+        run: echo >> final_sub.txt
 
       - name: Validate generated Xray configuration
         shell: bash
