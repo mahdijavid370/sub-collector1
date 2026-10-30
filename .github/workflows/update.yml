@@ -41,7 +41,10 @@ jobs:
       - name: Diagnose stored configuration
         env:
           XRAY_LOCATION_ASSET: ${{ runner.temp }}/xray
-        run: python diagnose_xray.py "$RUNNER_TEMP/xray/xray" stored final_sub.txt
+        run: |
+          python diagnose_xray.py "$RUNNER_TEMP/xray/xray" stored final_sub.txt
+          cp final_sub.txt "$RUNNER_TEMP/stored.json"
+          python diagnose_xray.py "$RUNNER_TEMP/xray/xray" stored_json "$RUNNER_TEMP/stored.json"
       - name: Collect subscriptions without publishing
         env:
           SUB_URLS: ${{ secrets.SUB_URLS }}
@@ -49,7 +52,16 @@ jobs:
       - name: Diagnose freshly collected configuration without exposing credentials
         env:
           XRAY_LOCATION_ASSET: ${{ runner.temp }}/xray
-        run: python diagnose_xray.py "$RUNNER_TEMP/xray/xray" generated final_sub.txt
+        run: |
+          python diagnose_xray.py "$RUNNER_TEMP/xray/xray" generated final_sub.txt
+          cp final_sub.txt "$RUNNER_TEMP/generated.json"
+          python diagnose_xray.py "$RUNNER_TEMP/xray/xray" generated_json "$RUNNER_TEMP/generated.json"
+          if XRAY_LOCATION_ASSET="$RUNNER_TEMP/xray" "$RUNNER_TEMP/xray/xray" run -test -format json -c stdin: < final_sub.txt > "$RUNNER_TEMP/stdin-test.log" 2>&1; then
+            echo '::notice title=stdin_validation::valid'
+          else
+            echo '::error title=stdin_validation::rejected'
+            exit 1
+          fi
 
   build-and-update:
     if: github.ref != 'refs/heads/arena/f6a69f1a-sub-collector1'

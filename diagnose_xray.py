@@ -38,6 +38,8 @@ def check(path):
 
 def report(label, ok, output):
     state = 'valid' if ok else 'rejected'
+    if 'unsupported config file extension' in output.lower():
+        state = 'rejected_unsupported_file_extension'
     # Never print the raw output; Xray can include subscription credentials.
     relevant = ' '.join(line for line in output.splitlines() if 'failed to start' in line.lower())
     words = sorted({word for word in re.findall(r'[a-z]+', relevant.lower()) if word in WORDS})
