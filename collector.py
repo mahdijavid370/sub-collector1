@@ -480,7 +480,10 @@ def _parse_vless_to_outbound(vless_url: str, tag_name: str) -> dict:
 
 
 def generate_full_json_config(outbound_proxies: list[dict]) -> dict:
-    """تولید ساختار کامل JSON نهایی"""
+    """Build the Xray config with client-side health-based proxy selection."""
+    # Randomised probes react faster than the previous 3-minute sweep, while
+    # limiting the steady-state probe rate for very large subscriptions.
+    probe_interval_seconds = max(45, (len(outbound_proxies) + 1) // 2)
     base_config: dict = {
         'dns': {
             'hosts': {
@@ -543,20 +546,24 @@ def generate_full_json_config(outbound_proxies: list[dict]) -> dict:
             }
         ],
         'log': {'loglevel': 'warning'},
-        'observatory': {
-            'enableConcurrency': True,
-            'probeInterval': '3m',
-            'probeUrl': 'https://www.gstatic.com/generate_204',
+        'burstObservatory': {
             'subjectSelector': ['proxy-'],
+            'pingConfig': {
+                'destination': 'https://www.gstatic.com/generate_204',
+                'interval': f'{probe_interval_seconds}s',
+                'sampling': 1,
+                'timeout': '5s',
+                'httpMethod': 'HEAD',
+            },
         },
         'outbounds': [],
         'policy': {
             'levels': {
                 '8': {
                     'connIdle': 300,
-                    'downlinkOnly': 1,
-                    'handshake': 4,
-                    'uplinkOnly': 1,
+                    'downlinkOnly': 30,
+                    'handshake': 8,
+                    'uplinkOnly': 30,
                 }
             },
             'system': {
@@ -625,6 +632,18 @@ def generate_full_json_config(outbound_proxies: list[dict]) -> dict:
         },
         'stats': {},
     }
+
+    # Never fall back to a direct connection while health observations are
+    # pending or unavailable. The first proxy is a best-effort fallback only.
+    if outbound_proxies:
+        fallback_tag = outbound_proxies[0].get('tag')
+        if (
+            not isinstance(fallback_tag, str)
+            or not fallback_tag.startswith('proxy-')
+            or outbound_proxies[0].get('protocol') != 'vless'
+        ):
+            raise ValueError('The first outbound must be a tagged VLESS proxy')
+        base_config['routing']['balancers'][0]['fallbackTag'] = fallback_tag
 
     # افزودن تمام پروکسی‌ها به خروجی‌ها
     base_config['outbounds'].extend(outbound_proxies)
