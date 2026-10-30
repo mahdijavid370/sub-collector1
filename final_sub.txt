@@ -76,13 +76,17 @@
   "log": {
     "loglevel": "warning"
   },
-  "observatory": {
-    "enableConcurrency": true,
-    "probeInterval": "3m",
-    "probeUrl": "https://www.gstatic.com/generate_204",
+  "burstObservatory": {
     "subjectSelector": [
       "proxy-"
-    ]
+    ],
+    "pingConfig": {
+      "destination": "https://www.gstatic.com/generate_204",
+      "interval": "45s",
+      "sampling": 1,
+      "timeout": "5s",
+      "httpMethod": "HEAD"
+    }
   },
   "outbounds": [
     {
@@ -994,9 +998,9 @@
     "levels": {
       "8": {
         "connIdle": 300,
-        "downlinkOnly": 1,
-        "handshake": 4,
-        "uplinkOnly": 1
+        "downlinkOnly": 30,
+        "handshake": 8,
+        "uplinkOnly": 30
       }
     },
     "system": {
@@ -1014,7 +1018,8 @@
         "strategy": {
           "type": "leastPing"
         },
-        "tag": "proxy-round"
+        "tag": "proxy-round",
+        "fallbackTag": "proxy-1"
       }
     ],
     "domainStrategy": "AsIs",

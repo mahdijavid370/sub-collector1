@@ -56,6 +56,12 @@ jobs:
           fi
           echo "Xray configuration is valid."
 
+      - name: Test Xray routing and local speed measurement
+        env:
+          XRAY_BINARY: ${{ runner.temp }}/xray/xray
+          XRAY_LOCATION_ASSET: ${{ runner.temp }}/xray
+        run: python -m unittest discover -s tests -p 'test_xray_runtime.py' -v
+
       - name: Commit and push changed output
         shell: bash
         run: |

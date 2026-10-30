@@ -3,3 +3,6 @@
 __pycache__/
 *.py[cod]
 .sub-collector-*/
+
+# Locally benchmarked profiles can contain private node credentials.
+/final_sub.fast.txt

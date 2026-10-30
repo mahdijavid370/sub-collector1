@@ -210,8 +210,37 @@ class OutboundTests(unittest.TestCase):
         config = collector.generate_full_json_config(outbounds)
         self.assertEqual([item['tag'] for item in config['outbounds']],
                          ['proxy-1', 'proxy-2', 'direct', 'block'])
-        self.assertEqual(config['routing']['balancers'][0]['selector'], ['proxy-'])
-        self.assertEqual(config['observatory']['subjectSelector'], ['proxy-'])
+        balancer = config['routing']['balancers'][0]
+        self.assertEqual(balancer['selector'], ['proxy-'])
+        self.assertEqual(balancer['strategy']['type'], 'leastPing')
+        self.assertEqual(balancer['fallbackTag'], 'proxy-1')
+        self.assertNotIn('observatory', config)
+        observer = config['burstObservatory']
+        self.assertEqual(observer['subjectSelector'], ['proxy-'])
+        self.assertEqual(observer['pingConfig']['interval'], '45s')
+        self.assertEqual(observer['pingConfig']['sampling'], 1)
+        self.assertEqual(observer['pingConfig']['timeout'], '5s')
+        self.assertEqual(observer['pingConfig']['httpMethod'], 'HEAD')
+        self.assertEqual(config['policy']['levels']['8']['downlinkOnly'], 30)
+        self.assertEqual(config['policy']['levels']['8']['uplinkOnly'], 30)
+        self.assertEqual(config['policy']['levels']['8']['handshake'], 8)
+
+    def test_fallback_must_be_a_proxy_tag(self):
+        with self.assertRaises(ValueError):
+            collector.generate_full_json_config([{'tag': 'direct', 'protocol': 'freedom'}])
+        with self.assertRaises(ValueError):
+            collector.generate_full_json_config([{}])
+        with self.assertRaises(ValueError):
+            collector.generate_full_json_config([{'tag': 'proxy-1', 'protocol': 'freedom'}])
+
+    def test_large_subscriptions_limit_steady_state_probe_rate(self):
+        for count, interval in [(90, 45), (91, 46), (1001, 501)]:
+            with self.subTest(count=count):
+                nodes = [{'tag': f'proxy-{i}', 'protocol': 'vless'} for i in range(1, count + 1)]
+                config = collector.generate_full_json_config(nodes)
+                self.assertEqual(config['burstObservatory']['pingConfig']['interval'], f'{interval}s')
+                self.assertLessEqual(count / interval, 2)
+                self.assertEqual(config['routing']['balancers'][0]['fallbackTag'], 'proxy-1')
 
 
 class TestHTTPServer:
@@ -485,6 +514,8 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn('SUB_URLS: ${{ secrets.SUB_URLS }}', workflow)
         self.assertIn('python -m unittest discover -s tests -v', workflow)
         self.assertIn('run -test -format json -c final_sub.txt', workflow)
+        self.assertIn("-p 'test_xray_runtime.py'", workflow)
+        self.assertIn('XRAY_BINARY: ${{ runner.temp }}/xray/xray', workflow)
         self.assertIn('sha256sum --check --status', workflow)
         self.assertIn('git add -A -- javidsub final_sub.txt json_configs/', workflow)
         self.assertIn('git push origin "HEAD:$GITHUB_REF"', workflow)
