@@ -12,7 +12,47 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  diagnose-previous-failure:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Classify previous failure without exposing its log
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          if ! gh run view 41024261844 --job 123958524202 --log-failed > "$RUNNER_TEMP/previous-failure.log" 2>/dev/null; then
+            echo '::error title=Diagnostic unavailable::Could not retrieve the previous run log.'
+            exit 1
+          fi
+          python - "$RUNNER_TEMP/previous-failure.log" <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+
+          text = Path(sys.argv[1]).read_text(errors='replace')
+          text = re.sub(r'\x1b\[[0-9;]*[A-Za-z]', '', text)
+          lines = [re.sub(r'^.*?\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z\s*', '', line).strip() for line in text.splitlines()]
+          curl_errors = [re.search(r'curl: \((\d+)\)', line) for line in lines if 'curl: (' in line]
+          if any(line == 'Xray rejected the generated configuration; nothing will be committed.' for line in lines):
+              reason = 'xray_configuration_rejected'
+          elif any('caution: filename not matched' in line for line in lines):
+              reason = 'xray_archive_missing_expected_files'
+          elif curl_errors and curl_errors[0]:
+              reason = 'xray_download_curl_error_' + curl_errors[0].group(1)
+          elif any('sha256sum:' in line or 'checksum' in line.lower() and 'failed' in line.lower() for line in lines):
+              reason = 'xray_checksum_failed'
+          else:
+              reason = 'unclassified_validation_failure'
+          print('::notice title=Previous validation failure::' + reason)
+          PY
+
   build-and-update:
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
