@@ -1,0 +1,5 @@
+# A local copy of the SUB_URLS GitHub secret must never be committed.
+/SUB_URLS
+__pycache__/
+*.py[cod]
+.sub-collector-*/

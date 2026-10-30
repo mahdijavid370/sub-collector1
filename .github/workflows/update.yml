@@ -2,33 +2,73 @@ name: Auto Update Subscription Configs
 
 on:
   schedule:
-    # اجرا هر ۴ ساعت یک بار (دقیقه ۰ ساعت‌های ۰, ۶, ۱۲, ۱۸ UTC)
-    - cron: '0 */4 * * *'
-  workflow_dispatch: # امکان اجرای دستی در هر زمان
+    # Every four hours at :17 UTC (avoids the busy start of the hour).
+    - cron: '17 */4 * * *'
+  workflow_dispatch:
+
+# Scheduled and manually triggered runs must not race to update the same branch.
+concurrency:
+  group: subscription-update-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build-and-update:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version: '3.x'
+          python-version: '3.12'
 
-      - name: Run Collector Script
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Collect subscriptions
         env:
           SUB_URLS: ${{ secrets.SUB_URLS }}
         run: python collector.py
 
-      - name: Commit and Push Changes
+      - name: Validate generated Xray configuration
+        shell: bash
+        env:
+          XRAY_VERSION: 'v26.10.29'
+          XRAY_SHA256: '8a5f3e6a1057e4bd0f8a7c57c9d91204b4be0b74222a6e210d070603101163c2'
         run: |
+          archive="$RUNNER_TEMP/xray.zip"
+          assets="$RUNNER_TEMP/xray"
+          curl --fail --silent --show-error --location --retry 3 \
+            "https://github.com/XTLS/Xray-core/releases/download/$XRAY_VERSION/Xray-linux-64.zip" \
+            -o "$archive"
+          echo "$XRAY_SHA256  $archive" | sha256sum --check --status
+          mkdir -p "$assets"
+          unzip -q "$archive" xray geoip.dat geosite.dat -d "$assets"
+          # Validation errors can contain node credentials; do not print the log.
+          if ! XRAY_LOCATION_ASSET="$assets" "$assets/xray" run -test -format json -c final_sub.txt > "$RUNNER_TEMP/xray-validation.log" 2>&1; then
+            echo "Xray rejected the generated configuration; nothing will be committed."
+            exit 1
+          fi
+          echo "Xray configuration is valid."
+
+      - name: Commit and push changed output
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" != refs/heads/* ]]; then
+            echo "Subscription updates require a branch, not a tag."
+            exit 1
+          fi
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add javidsub final_sub.txt json_configs/
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update configs [$(date -u +'%Y-%m-%d %H:%M UTC')]" && git push)
+          git add -A -- javidsub final_sub.txt json_configs/
+          if git diff --cached --quiet; then
+            echo "No output changes to commit."
+            exit 0
+          fi
+          git commit -m "Auto-update configs [$(date -u +'%Y-%m-%d %H:%M UTC')]"
+          git push origin "HEAD:$GITHUB_REF"
