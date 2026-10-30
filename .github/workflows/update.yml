@@ -1,6 +1,7 @@
 name: Auto Update Subscription Configs
 
 on:
+  # Temporary branch-only trigger for an end-to-end workflow test.
   push:
     branches:
       - arena/f6a69f1a-sub-collector1
@@ -15,56 +16,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  diagnose-previous-failure:
-    if: github.ref == 'refs/heads/arena/f6a69f1a-sub-collector1'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - name: Set up Python
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
-        with:
-          python-version: '3.12'
-      - name: Install and verify the pinned Xray release
-        shell: bash
-        run: |
-          archive="$RUNNER_TEMP/xray.zip"
-          assets="$RUNNER_TEMP/xray"
-          curl --fail --silent --show-error --location --retry 3 \
-            "https://github.com/XTLS/Xray-core/releases/download/v26.10.29/Xray-linux-64.zip" \
-            -o "$archive"
-          echo '8a5f3e6a1057e4bd0f8a7c57c9d91204b4be0b74222a6e210d070603101163c2  '"$archive" | sha256sum --check --status
-          mkdir -p "$assets"
-          unzip -q "$archive" xray geoip.dat geosite.dat -d "$assets"
-      - name: Diagnose stored configuration
-        env:
-          XRAY_LOCATION_ASSET: ${{ runner.temp }}/xray
-        run: |
-          python diagnose_xray.py "$RUNNER_TEMP/xray/xray" stored final_sub.txt
-          cp final_sub.txt "$RUNNER_TEMP/stored.json"
-          python diagnose_xray.py "$RUNNER_TEMP/xray/xray" stored_json "$RUNNER_TEMP/stored.json"
-      - name: Collect subscriptions without publishing
-        env:
-          SUB_URLS: ${{ secrets.SUB_URLS }}
-        run: python collector.py
-      - name: Diagnose freshly collected configuration without exposing credentials
-        env:
-          XRAY_LOCATION_ASSET: ${{ runner.temp }}/xray
-        run: |
-          python diagnose_xray.py "$RUNNER_TEMP/xray/xray" generated final_sub.txt
-          cp final_sub.txt "$RUNNER_TEMP/generated.json"
-          python diagnose_xray.py "$RUNNER_TEMP/xray/xray" generated_json "$RUNNER_TEMP/generated.json"
-          if XRAY_LOCATION_ASSET="$RUNNER_TEMP/xray" "$RUNNER_TEMP/xray/xray" run -test -format json -c stdin: < final_sub.txt > "$RUNNER_TEMP/stdin-test.log" 2>&1; then
-            echo '::notice title=stdin_validation::valid'
-          else
-            echo '::error title=stdin_validation::rejected'
-            exit 1
-          fi
-
   build-and-update:
-    if: github.ref != 'refs/heads/arena/f6a69f1a-sub-collector1'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -101,8 +53,10 @@ jobs:
           echo "$XRAY_SHA256  $archive" | sha256sum --check --status
           mkdir -p "$assets"
           unzip -q "$archive" xray geoip.dat geosite.dat -d "$assets"
+          # Xray v26.10.29 rejects regular .txt files even with -format json.
+          # Feed the existing subscription file via stdin, preserving its public name.
           # Validation errors can contain node credentials; do not print the log.
-          if ! XRAY_LOCATION_ASSET="$assets" "$assets/xray" run -test -format json -c final_sub.txt > "$RUNNER_TEMP/xray-validation.log" 2>&1; then
+          if ! XRAY_LOCATION_ASSET="$assets" "$assets/xray" run -test -format json -c stdin: < final_sub.txt > "$RUNNER_TEMP/xray-validation.log" 2>&1; then
             echo "Xray rejected the generated configuration; nothing will be committed."
             exit 1
           fi

@@ -163,6 +163,24 @@ class XrayRuntimeTests(unittest.TestCase):
     def tearDownClass(cls):
         cls._cleanup()
 
+    def test_subscription_txt_validates_via_stdin_and_invalid_json_is_rejected(self):
+        config = collector.generate_full_json_config(self.nodes)
+        with tempfile.TemporaryDirectory(prefix='test-xray-stdin-') as temporary:
+            subscription = Path(temporary) / 'final_sub.txt'
+            subscription.write_text(json.dumps(config), encoding='utf-8')
+            command = [self.binary, 'run', '-test', '-format', 'json', '-c', 'stdin:']
+            with subscription.open('rb') as file:
+                valid = subprocess.run(
+                    command, stdin=file, check=False,
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20,
+                )
+            self.assertEqual(valid.returncode, 0, 'Xray rejected valid JSON from stdin')
+            invalid = subprocess.run(
+                command, input=b'{"outbounds": [', check=False,
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20,
+            )
+            self.assertNotEqual(invalid.returncode, 0, 'Xray accepted invalid JSON from stdin')
+
     def test_local_speed_test_selects_faster_tunnel_and_outputs_valid_xray_profile(self):
         config = collector.generate_full_json_config(self.nodes)
         with tempfile.TemporaryDirectory(prefix='test-speedtest-') as temporary:
