@@ -19,40 +19,37 @@ jobs:
     if: github.ref == 'refs/heads/arena/f6a69f1a-sub-collector1'
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: read
     steps:
-      - name: Classify previous failure without exposing its log
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+        with:
+          python-version: '3.12'
+      - name: Install and verify the pinned Xray release
         shell: bash
         run: |
-          if ! gh run view 41024261844 --job 123958524202 --log-failed > "$RUNNER_TEMP/previous-failure.log" 2>/dev/null; then
-            echo '::error title=Diagnostic unavailable::Could not retrieve the previous run log.'
-            exit 1
-          fi
-          python - "$RUNNER_TEMP/previous-failure.log" <<'PY'
-          import re
-          import sys
-          from pathlib import Path
-
-          text = Path(sys.argv[1]).read_text(errors='replace')
-          text = re.sub(r'\x1b\[[0-9;]*[A-Za-z]', '', text)
-          lines = [re.sub(r'^.*?\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z\s*', '', line).strip() for line in text.splitlines()]
-          curl_errors = [re.search(r'curl: \((\d+)\)', line) for line in lines if 'curl: (' in line]
-          if any(line == 'Xray rejected the generated configuration; nothing will be committed.' for line in lines):
-              reason = 'xray_configuration_rejected'
-          elif any('caution: filename not matched' in line for line in lines):
-              reason = 'xray_archive_missing_expected_files'
-          elif curl_errors and curl_errors[0]:
-              reason = 'xray_download_curl_error_' + curl_errors[0].group(1)
-          elif any('sha256sum:' in line or 'checksum' in line.lower() and 'failed' in line.lower() for line in lines):
-              reason = 'xray_checksum_failed'
-          else:
-              reason = 'unclassified_validation_failure'
-          print('::notice title=Previous validation failure::' + reason)
-          PY
+          archive="$RUNNER_TEMP/xray.zip"
+          assets="$RUNNER_TEMP/xray"
+          curl --fail --silent --show-error --location --retry 3 \
+            "https://github.com/XTLS/Xray-core/releases/download/v26.10.29/Xray-linux-64.zip" \
+            -o "$archive"
+          echo '8a5f3e6a1057e4bd0f8a7c57c9d91204b4be0b74222a6e210d070603101163c2  '"$archive" | sha256sum --check --status
+          mkdir -p "$assets"
+          unzip -q "$archive" xray geoip.dat geosite.dat -d "$assets"
+      - name: Diagnose stored configuration
+        env:
+          XRAY_LOCATION_ASSET: ${{ runner.temp }}/xray
+        run: python diagnose_xray.py "$RUNNER_TEMP/xray/xray" stored final_sub.txt
+      - name: Collect subscriptions without publishing
+        env:
+          SUB_URLS: ${{ secrets.SUB_URLS }}
+        run: python collector.py
+      - name: Diagnose freshly collected configuration without exposing credentials
+        env:
+          XRAY_LOCATION_ASSET: ${{ runner.temp }}/xray
+        run: python diagnose_xray.py "$RUNNER_TEMP/xray/xray" generated final_sub.txt
 
   build-and-update:
     if: github.ref != 'refs/heads/arena/f6a69f1a-sub-collector1'
